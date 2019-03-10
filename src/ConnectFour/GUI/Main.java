@@ -6,15 +6,21 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 public class Main extends Application {
     private static Board board;
+    private static Pane discRoot = new Pane();
+
+    static void addDisc(Circle discShape) {
+        discRoot.getChildren().add(discShape);
+    }
 
     private Parent createContent() {
         Pane root = new Pane();
 
+        root.getChildren().add(discRoot);
         root.getChildren().addAll(Painter.makeDropColumns(Board.ROWS, Board.COLUMNS));
         root.getChildren().add(Painter.makeGrid(Board.ROWS, Board.COLUMNS));
 
