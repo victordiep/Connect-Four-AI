@@ -3,13 +3,15 @@ package ConnectFour.Logic;
 import java.util.Optional;
 
 public class Board {
+    public Turn turn;
+
     public static final int COLUMNS = 7;
     public static final int ROWS = 6;
 
-    private static final int MAX_INDEX_COLUMN = COLUMNS-1;
-    private static final int MAX_INDEX_ROW = ROWS-1;
+    protected static final int MAX_INDEX_COLUMN = COLUMNS-1;
+    protected static final int MAX_INDEX_ROW = ROWS-1;
 
-    private static Disc[][] discs;
+    protected static Disc[][] discs;
 
     public Board() {
         discs = new Disc[COLUMNS][ROWS];
@@ -44,6 +46,7 @@ public class Board {
         return new Point(column, row);
     }
 
+    // For the AI that can remove
     public static void removeBottomDisc(final int column) {
         Disc bottomDisc = getDisc(column, ROWS-1).orElse(null);
 

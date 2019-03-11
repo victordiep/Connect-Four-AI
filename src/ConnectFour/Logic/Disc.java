@@ -9,6 +9,10 @@ public class Disc {
         this.isOwnedByPlayer = isOwnedByPlayer;
     }
 
+    public Disc(Disc disc) {
+        this.isOwnedByPlayer = disc.isOwnedByPlayer();
+    }
+
     public boolean isOwnedByPlayer() {
         return isOwnedByPlayer;
     }
