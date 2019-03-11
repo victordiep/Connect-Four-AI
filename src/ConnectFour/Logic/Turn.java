@@ -1,17 +1,24 @@
 package ConnectFour.Logic;
 
+/*
+ * Represents
+ */
 public class Turn {
-    private static boolean isPlayerMove = true;
+    private boolean isPlayerMove;
 
     public Turn() {
-
+        isPlayerMove = true;
     }
 
-    public static boolean isPlayerTurn() {
+    public Turn(boolean turn) {
+        isPlayerMove = turn;
+    }
+
+    public boolean isPlayerTurn() {
         return isPlayerMove;
     }
 
-    public static void changeToAITurn() {
-        isPlayerMove = false;
+    public void changeTurn() {
+        isPlayerMove = !isPlayerMove;
     }
 }

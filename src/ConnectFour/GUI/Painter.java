@@ -1,22 +1,32 @@
 package ConnectFour.GUI;
 
-import ConnectFour.Logic.Board;
-import ConnectFour.Logic.Disc;
-import ConnectFour.Logic.Point;
-import ConnectFour.Logic.Turn;
+import ConnectFour.Logic.*;
 
+import ConnectFour.Logic.Point;
+import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
-import javafx.scene.effect.Light;
-import javafx.scene.effect.Lighting;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.effect.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Painter handles creating the UI and interactions with the UI
+ *
+ * It should probably be broken into a classes for menu options vs. the game UI
+ */
 public class Painter {
     private static final int TILE_SIZE = 80;
     private static final int DISTANCE_BETWEEN_CIRCLES = 5;
@@ -24,11 +34,16 @@ public class Painter {
     private static final Color playerColor = Color.RED;
     private static final Color aiColor = Color.YELLOW;
 
-    static Shape makeGrid(final int rows, final int columns) {
-        Shape gridShape = new Rectangle((columns+1) * TILE_SIZE, (rows+1) * TILE_SIZE);
+    public static final int WIDTH = (Board.COLUMNS+1) * TILE_SIZE;
+    public static final int HEIGHT = (Board.ROWS+1) * TILE_SIZE;
 
-        for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < columns; x++) {
+    private static boolean isGamePaused = false;
+
+     static Shape makeGrid() {
+        Shape gridShape = new Rectangle(WIDTH, HEIGHT);
+
+        for (int y = 0; y < Board.ROWS; y++) {
+            for (int x = 0; x < Board.COLUMNS; x++) {
                 Circle circle = new Circle((double) TILE_SIZE / 2);
 
                 circle.setCenterX((double) TILE_SIZE / 2);
@@ -57,15 +72,15 @@ public class Painter {
 
     private static class DiscShape extends Circle {
          DiscShape() {
-            super((double) TILE_SIZE / 2, Turn.isPlayerTurn() ? playerColor : aiColor);
+            super((double) TILE_SIZE / 2, GlobalBoard.getTurn() ? playerColor : aiColor);
 
             setCenterX((double) TILE_SIZE / 2);
             setCenterY((double) TILE_SIZE / 2);
         }
     }
 
-    static void dropDisc(DiscShape discShape, final int column) {
-        Point point = Board.placeDisc(new Disc(Turn.isPlayerTurn()), column);
+    static void dropDisc(DiscShape discShape, int column) {
+        Point point = GlobalBoard.getInstance().placeDisc(new Disc(GlobalBoard.getTurn()), column);
 
         if (point.getY() >= 0) {
             Main.addDisc(discShape);
@@ -80,16 +95,16 @@ public class Painter {
                 }
                 */
             });
-            Turn.changeToAITurn();
+
             dropAnimation.play();
         }
     }
 
-    static List<Rectangle> makeDropColumns(final int rows, final int columns) {
+    static List<Rectangle> makeDropColumns() {
         List<Rectangle> list = new ArrayList<>();
 
-        for (int x = 0; x < columns; x++) {
-            Rectangle rect = new Rectangle(TILE_SIZE, (rows+1) * TILE_SIZE);
+        for (int x = 0; x < Board.COLUMNS; x++) {
+            Rectangle rect = new Rectangle(TILE_SIZE, HEIGHT);
             rect.setTranslateX((double) (x * (TILE_SIZE + DISTANCE_BETWEEN_CIRCLES) + TILE_SIZE / 3));
             rect.setFill(Color.TRANSPARENT);
 
@@ -98,7 +113,7 @@ public class Painter {
 
             final int column = x;
             rect.setOnMouseClicked(e -> {
-                if (Turn.isPlayerTurn()){
+                if (GlobalBoard.getTurn()){
                     dropDisc(new DiscShape(), column);
                 }
             });
@@ -109,5 +124,88 @@ public class Painter {
         return list;
     }
 
+    private static class MenuButton extends StackPane {
+         private Text text;
 
+         public MenuButton(String name) {
+             text = new Text(name);
+             text.setFont(text.getFont().font(20));
+             text.setFill(Color.WHITE);
+             text.setTranslateX(10);
+
+             Rectangle bg = new Rectangle(400, 30);
+             bg.setOpacity(0.6);
+             bg.setFill(Color.BLACK);
+             bg.setEffect(new GaussianBlur(3.5));
+
+             setAlignment(Pos.CENTER_LEFT);
+             getChildren().addAll(bg, text);
+
+             setOnMouseEntered(e -> {
+                 bg.setFill(Color.WHITE);
+                 text.setFill(Color.BLACK);
+             });
+
+             setOnMouseExited(e -> {
+                 bg.setFill(Color.BLACK);
+                 text.setFill(Color.WHITE);
+             });
+
+             DropShadow shadow = new DropShadow(50, Color.WHITE);
+             shadow.setInput(new Glow());
+
+             setOnMousePressed(e -> setEffect(shadow));
+             setOnMouseReleased(e-> setEffect(null));
+         }
+    }
+
+    private static class GameMenu extends Parent {
+        private Text text;
+
+        public GameMenu() {
+            setVisible(false);
+
+            VBox menu = new VBox(10);
+
+            menu.setTranslateX(100);
+            menu.setTranslateY(200);
+
+            MenuButton classicModeBtn = new MenuButton("Classic: Player vs. Computer");
+            MenuButton remixModeBtn = new MenuButton("Remix: Player vs. Computer");
+            MenuButton classicAIModeBtn = new MenuButton("Classic: Computer vs. Computer");
+            MenuButton remixAIModeBtn = new MenuButton("Remix: Computer vs. Computer");
+
+            classicModeBtn.setOnMouseClicked(e -> {
+
+            });
+
+            remixModeBtn.setOnMouseClicked(e -> {
+
+            });
+
+            classicAIModeBtn.setOnMouseClicked(e -> {
+
+            });
+
+            remixAIModeBtn.setOnMouseClicked(e -> {
+
+            });
+
+            menu.getChildren().addAll(classicModeBtn, remixModeBtn, classicAIModeBtn, remixAIModeBtn);
+
+            Rectangle bg = new Rectangle(WIDTH, HEIGHT);
+            bg.setFill(Color.BLACK);
+            bg.setOpacity(0.7);
+
+            getChildren().addAll(bg, menu);
+        }
+    }
+
+    static Parent makePauseMenu() {
+        GameMenu gameMenu = new GameMenu();
+
+
+
+        return gameMenu;
+    }
 }

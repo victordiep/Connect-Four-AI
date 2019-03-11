@@ -8,16 +8,21 @@ public class Board {
     public static final int COLUMNS = 7;
     public static final int ROWS = 6;
 
-    protected static final int MAX_INDEX_COLUMN = COLUMNS-1;
-    protected static final int MAX_INDEX_ROW = ROWS-1;
+    public static final int MAX_INDEX_COLUMN = COLUMNS-1;
+    public static final int MAX_INDEX_ROW = ROWS-1;
 
-    protected static Disc[][] discs;
+    protected Disc[][] discs;
 
     public Board() {
         discs = new Disc[COLUMNS][ROWS];
+        turn = new Turn();
     }
 
-    private static Optional<Disc> getDisc(final int column, final int row) {
+    public boolean getTurn() {
+        return turn.isPlayerTurn();
+    }
+
+    public Optional<Disc> getDisc(final int column, final int row) {
         if (column < 0 || column >= COLUMNS
                 || row < 0 || row >= ROWS) {
             return Optional.empty();
@@ -26,7 +31,7 @@ public class Board {
         return Optional.ofNullable(discs[column][row]);
     }
 
-    public static Point placeDisc(final Disc disc, final int column) {
+    public int findEmptyRow(final int column) {
         int row = MAX_INDEX_ROW;
 
         // Look for a row with an empty spot in the column
@@ -38,6 +43,14 @@ public class Board {
             row--;
         } while (row >= 0);
 
+        return row;
+    }
+
+    public Point placeDisc(final Disc disc, final int column) {
+        turn.changeTurn();
+
+        int row = findEmptyRow(column);
+
         // We broke out of the loop, therefore we found a space to place the disc
         if (row >= 0) {
             discs[column][row] = disc;
@@ -47,7 +60,7 @@ public class Board {
     }
 
     // For the AI that can remove
-    public static void removeBottomDisc(final int column) {
+    public void removeBottomDisc(final int column) {
         Disc bottomDisc = getDisc(column, ROWS-1).orElse(null);
 
         // Shift all the discs

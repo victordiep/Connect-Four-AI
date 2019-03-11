@@ -1,16 +1,18 @@
 package ConnectFour.GUI;
 
 import ConnectFour.Logic.Board;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class Main extends Application {
-    private static Board board;
     private static Pane discRoot = new Pane();
 
     static void addDisc(Circle discShape) {
@@ -21,8 +23,9 @@ public class Main extends Application {
         Pane root = new Pane();
 
         root.getChildren().add(discRoot);
-        root.getChildren().addAll(Painter.makeDropColumns(Board.ROWS, Board.COLUMNS));
-        root.getChildren().add(Painter.makeGrid(Board.ROWS, Board.COLUMNS));
+        root.getChildren().addAll(Painter.makeDropColumns());
+        root.getChildren().add(Painter.makeGrid());
+        root.getChildren().add(Painter.makePauseMenu());
 
         return root;
     }
@@ -37,14 +40,9 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    private void setupBoard() {
-        board = new Board();
-    }
-
     @Override
     public void start(Stage primaryStage) throws Exception{
         setupPrimaryStage(primaryStage);
-        setupBoard();
     }
 
 
