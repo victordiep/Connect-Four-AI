@@ -185,19 +185,19 @@ public class Painter {
             MenuButton remixAIModeBtn = new MenuButton("Remix: Computer vs. Computer");
 
             classicModeBtn.setOnMouseClicked(e -> {
-
+                GlobalBoard.setGameMode(GameMode.CLASSIC_MODE);
             });
 
             remixModeBtn.setOnMouseClicked(e -> {
-
+                GlobalBoard.setGameMode(GameMode.REMIX_MODE);
             });
 
             classicAIModeBtn.setOnMouseClicked(e -> {
-
+                GlobalBoard.setGameMode(GameMode.AI_CLASSIC_MODE);
             });
 
             remixAIModeBtn.setOnMouseClicked(e -> {
-
+                GlobalBoard.setGameMode(GameMode.AI_REMIX_MODE);
             });
 
             menu.getChildren().addAll(classicModeBtn, remixModeBtn, classicAIModeBtn, remixAIModeBtn);

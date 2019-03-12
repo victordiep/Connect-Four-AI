@@ -5,6 +5,7 @@ package ConnectFour.Logic;
  */
 public class GlobalBoard {
     private static Board board;
+    private static GameMode gameMode;
 
     private GlobalBoard() {
 
@@ -48,6 +49,22 @@ public class GlobalBoard {
         }
 
         return board.getLastPlacement();
+    }
+
+    public static GameMode getGameMode() {
+        if (board == null) {
+            board = new Board();
+        }
+
+        return gameMode;
+    }
+
+    public static void setGameMode(GameMode mode) {
+        if (board == null) {
+            board = new Board();
+        }
+
+        gameMode = mode;
     }
 
     public static int getNumberOfMoves() {
