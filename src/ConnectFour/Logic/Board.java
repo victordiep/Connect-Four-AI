@@ -146,8 +146,117 @@ public class Board {
                 && player == disc3.isOwnedByPlayer();
     }
 
+    private int countPlayerSlots(Disc disc1, Disc disc2, Disc disc3, Disc disc4) {
+        int count = 0;
+
+        if (disc1 != null) {
+            if (disc1.isOwnedByPlayer()) {
+                count++;
+            }
+        }
+        if (disc2 != null) {
+            if (disc2.isOwnedByPlayer()) {
+                count++;
+            }
+        }
+        if (disc3 != null) {
+            if (disc3.isOwnedByPlayer()) {
+                count++;
+            }
+        }
+        if (disc4 != null) {
+            if (disc4.isOwnedByPlayer()) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    private int countEmptySlots(Disc disc1, Disc disc2, Disc disc3, Disc disc4) {
+        int count = 0;
+
+        if (disc1 == null) {
+            count++;
+        }
+        else if (disc2 == null) {
+            count++;
+        }
+        else if (disc3 == null) {
+            count++;
+        }
+        else if (disc4 == null) {
+            count++;
+        }
+
+        return count;
+    }
+
+    private int evaluateScore(Disc origDisc, Disc disc1, Disc disc2, Disc disc3) {
+        int score = 0;
+
+        if (discsNotNull(disc1, disc2, disc3)) {
+            if (checkIfDiscOwnerMatch(origDisc.isOwnedByPlayer(), disc1, disc2, disc3)) {
+                score += 100;
+            }
+        }
+        // There are empty slots
+        else {
+            if (countEmptySlots(origDisc, disc1, disc2, disc3) == 1) {
+                if (countPlayerSlots(origDisc, disc1, disc2, disc3) == 3) {
+                    score -= 4;
+                }
+                else {
+                    score += 5;
+                }
+            }
+            else if (countEmptySlots(origDisc, disc1, disc2, disc3) == 2) {
+                if (countPlayerSlots(origDisc, disc1, disc2, disc3) == 0) {
+                    score += 2;
+                }
+            }
+        }
+
+        return score;
+    }
+
+    private int countCenterSlots(Disc disc1, Disc disc2, Disc disc3) {
+        int count = 0;
+
+        if (disc1 != null) {
+            if (disc1.isOwnedByPlayer()) {
+                count++;
+            }
+        }
+        if (disc2 != null) {
+            if (disc2.isOwnedByPlayer()) {
+                count++;
+            }
+        }
+        if (disc3 != null) {
+            if (disc3.isOwnedByPlayer()) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
     public int scoreBoardState() {
         int score = 0;
+        int center_count = 0;
+
+        for (int col = 2; col < 5; col++) {
+            for (int row = 0; row < ROWS; row++) {
+                Disc disc1 = getDisc(col-1, row).orElse(null);
+                Disc disc2 = getDisc(col, row).orElse(null);
+                Disc disc3 = getDisc(col+1, row).orElse(null);
+
+                center_count += countCenterSlots(disc1, disc2, disc3);
+            }
+        }
+
+        score += center_count * 3;
 
         for (int col = 0; col < COLUMNS; col++) {
             for (int row = 0; row < ROWS; row++) {
@@ -163,42 +272,26 @@ public class Board {
                 Disc disc3 = getDisc(col, row+3).orElse(null);
 
                 if (row+3 < ROWS) {
-                    if (discsNotNull(disc1, disc2, disc3)) {
-                        if (checkIfDiscOwnerMatch(player, disc1, disc2, disc3)) {
-                            score += 100;
-                        }
-                    }
+                    score += evaluateScore(disc, disc1, disc2, disc3);
                 }
                 if (col+3 < COLUMNS) {
                     disc1 = getDisc(col+1, row).orElse(null);
                     disc2 = getDisc(col+2, row).orElse(null);
                     disc3 = getDisc(col+3, row).orElse(null);
 
-                    if (discsNotNull(disc1, disc2, disc3)) {
-                        if (checkIfDiscOwnerMatch(player, disc1, disc2, disc3)) {
-                            score += 100;
-                        }
-                    }
+                    score += evaluateScore(disc, disc1, disc2, disc3);
 
                     disc1 = getDisc(col+1, row+1).orElse(null);
                     disc2 = getDisc(col+2, row+2).orElse(null);
                     disc3 = getDisc(col+3, row+3).orElse(null);
 
-                    if (discsNotNull(disc1, disc2, disc3)) {
-                        if (checkIfDiscOwnerMatch(player, disc1, disc2, disc3)) {
-                            score += 100;
-                        }
-                    }
+                    score += evaluateScore(disc, disc1, disc2, disc3);
 
                     disc1 = getDisc(col+1, row-1).orElse(null);
                     disc2 = getDisc(col+2, row-2).orElse(null);
                     disc3 = getDisc(col+3, row-3).orElse(null);
 
-                    if (discsNotNull(disc1, disc2, disc3)) {
-                        if (checkIfDiscOwnerMatch(player, disc1, disc2, disc3)) {
-                            score += 100;
-                        }
-                    }
+                    score += evaluateScore(disc, disc1, disc2, disc3);
                 }
             }
         }

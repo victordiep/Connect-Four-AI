@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 public class AI {
-    public static final int searchDepth = 7;
+    public static final int searchDepth = 6;
 
     private AI() {
 
@@ -49,7 +49,7 @@ public class AI {
         int maxEval = Integer.MIN_VALUE;
 
         for (BoardState child : children) {
-            maxEval =  Integer.max(maxEval, minValue(child, alpha, beta, depth-1)) - child.getNumberOfMoves();
+            maxEval =  Integer.max(maxEval, minValue(child, alpha, beta, depth-1)) + (depth - searchDepth);
 
             if (maxEval >= beta) {
                 break;
@@ -76,7 +76,7 @@ public class AI {
         int minEval = Integer.MAX_VALUE;
 
         for (BoardState child : children) {
-            minEval =  Integer.min(minEval, maxValue(child, alpha, beta, depth-1)) + child.getNumberOfMoves();
+            minEval =  Integer.min(minEval, maxValue(child, alpha, beta, depth-1)) - (depth - searchDepth);
 
             if (minEval <= alpha) {
                 break;
