@@ -199,13 +199,13 @@ public class Board {
         if (disc1 == null) {
             count++;
         }
-        else if (disc2 == null) {
+        if (disc2 == null) {
             count++;
         }
-        else if (disc3 == null) {
+        if (disc3 == null) {
             count++;
         }
-        else if (disc4 == null) {
+        if (disc4 == null) {
             count++;
         }
 
@@ -276,7 +276,7 @@ public class Board {
             }
         }
 
-        score += center_count * 3;
+        score += center_count;
 
         for (int col = 0; col < COLUMNS; col++) {
             for (int row = 0; row < ROWS; row++) {
