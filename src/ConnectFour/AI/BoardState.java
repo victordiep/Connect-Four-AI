@@ -6,13 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class BoardState extends Board {
-    private Point lastPlacement;
-
     // Mimics the global board
     public BoardState() {
         turn = new Turn();
         this.discs = new Disc[COLUMNS][ROWS];
         lastPlacement = GlobalBoard.getLastPlacement();
+        numberOfMoves = GlobalBoard.getNumberOfMoves();
 
         for (int x = 0; x < Board.COLUMNS; x++) {
             for (int y = 0; y < Board.ROWS; y++) {
@@ -36,11 +35,13 @@ public class BoardState extends Board {
 
         Disc disc = new Disc(getTurn());
         lastPlacement = placeDisc(disc, moveToMake.getX());
+        numberOfMoves++;
     }
 
     private void copyBoardState(BoardState boardState) {
         turn = new Turn(boardState.getTurn());
         this.discs = new Disc[COLUMNS][ROWS];
+        numberOfMoves = boardState.getNumberOfMoves();
 
         if (boardState.getLastPlacement() != null) {
             lastPlacement = new Point(boardState.getLastPlacement());
@@ -58,10 +59,6 @@ public class BoardState extends Board {
                 }
             }
         }
-    }
-
-    public Point getLastPlacement() {
-        return lastPlacement;
     }
 
     private List<Point> getAllPossiblePlacements() {

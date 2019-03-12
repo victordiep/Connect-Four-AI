@@ -11,18 +11,19 @@ public class Board {
     public static final int MAX_INDEX_COLUMN = COLUMNS-1;
     public static final int MAX_INDEX_ROW = ROWS-1;
 
-    private static final int PIECES_IN_ROW_FOR_WIN = 4;
-
     private boolean isGameOver;
 
     protected Disc[][] discs;
     protected Point lastPlacement;
+    protected int numberOfMoves;
+
 
     public Board() {
         discs = new Disc[COLUMNS][ROWS];
         turn = new Turn();
         isGameOver = false;
         lastPlacement = null;
+        numberOfMoves = 0;
     }
 
     public boolean getTurn() {
@@ -31,6 +32,10 @@ public class Board {
 
     public Point getLastPlacement() {
         return lastPlacement;
+    }
+
+    public int getNumberOfMoves() {
+        return numberOfMoves;
     }
 
     public boolean isGameOver() {
@@ -67,10 +72,10 @@ public class Board {
         // We broke out of the loop, therefore we found a space to place the disc
         if (row >= 0) {
             discs[column][row] = disc;
+            numberOfMoves++;
         }
 
         Point placement = new Point(column, row);
-
         evaluateGameState(placement);
         lastPlacement = placement;
         turn.changeTurn();
@@ -100,12 +105,12 @@ public class Board {
     }
 
     // Game end logic
-    public int evaluateGameState(Point placement) {
-        if (checkWinner(placement)) {
+    public int evaluateGameState(final Point placement) {
+        if (checkWinner()) {
+            isGameOver = true;
             // This should never be a null pointer or else it would never get past checkWinner
                 // Integer.MAX_VALUE if player 1 won
                 // Integer.MIN_VALUE if player 2 won
-            isGameOver = true;
             return discs[placement.getX()][placement.getY()].isOwnedByPlayer()
                     ? Integer.MAX_VALUE : Integer.MIN_VALUE;
         }
@@ -131,19 +136,129 @@ public class Board {
         return true;
     }
 
-    private int incrementChainCounter(Disc disc, boolean discOwner) {
-        if (disc != null) {
-            if (disc.isOwnedByPlayer() == discOwner) {
-                return 1;
+    private boolean discsNotNull(Disc disc1, Disc disc2, Disc disc3) {
+        return disc1 != null && disc2 != null && disc3 != null;
+    }
+
+    private boolean checkIfDiscOwnerMatch(boolean player, Disc disc1, Disc disc2, Disc disc3) {
+        return player == disc1.isOwnedByPlayer()
+                && player == disc2.isOwnedByPlayer()
+                && player == disc3.isOwnedByPlayer();
+    }
+
+    public int scoreBoardState() {
+        int score = 0;
+
+        for (int col = 0; col < COLUMNS; col++) {
+            for (int row = 0; row < ROWS; row++) {
+                final Disc disc = getDisc(col, row).orElse(null);
+
+                if (disc == null)
+                    continue;
+
+                final boolean player = disc.isOwnedByPlayer();
+
+                Disc disc1 = getDisc(col, row+1).orElse(null);
+                Disc disc2 = getDisc(col, row+2).orElse(null);
+                Disc disc3 = getDisc(col, row+3).orElse(null);
+
+                if (row+3 < ROWS) {
+                    if (discsNotNull(disc1, disc2, disc3)) {
+                        if (checkIfDiscOwnerMatch(player, disc1, disc2, disc3)) {
+                            score += 100;
+                        }
+                    }
+                }
+                if (col+3 < COLUMNS) {
+                    disc1 = getDisc(col+1, row).orElse(null);
+                    disc2 = getDisc(col+2, row).orElse(null);
+                    disc3 = getDisc(col+3, row).orElse(null);
+
+                    if (discsNotNull(disc1, disc2, disc3)) {
+                        if (checkIfDiscOwnerMatch(player, disc1, disc2, disc3)) {
+                            score += 100;
+                        }
+                    }
+
+                    disc1 = getDisc(col+1, row+1).orElse(null);
+                    disc2 = getDisc(col+2, row+2).orElse(null);
+                    disc3 = getDisc(col+3, row+3).orElse(null);
+
+                    if (discsNotNull(disc1, disc2, disc3)) {
+                        if (checkIfDiscOwnerMatch(player, disc1, disc2, disc3)) {
+                            score += 100;
+                        }
+                    }
+
+                    disc1 = getDisc(col+1, row-1).orElse(null);
+                    disc2 = getDisc(col+2, row-2).orElse(null);
+                    disc3 = getDisc(col+3, row-3).orElse(null);
+
+                    if (discsNotNull(disc1, disc2, disc3)) {
+                        if (checkIfDiscOwnerMatch(player, disc1, disc2, disc3)) {
+                            score += 100;
+                        }
+                    }
+                }
             }
         }
 
-        return 0;
+        return score;
     }
 
-    // TODO: Fix the logic here
-    private boolean checkWinner(Point placement) {
+    private boolean checkWinner() {
+        for (int col = 0; col < COLUMNS; col++) {
+            for (int row = 0; row < ROWS; row++) {
+                final Disc disc = getDisc(col, row).orElse(null);
+
+                if (disc == null)
+                    continue;
+
+                final boolean player = disc.isOwnedByPlayer();
+
+                Disc disc1 = getDisc(col, row+1).orElse(null);
+                Disc disc2 = getDisc(col, row+2).orElse(null);
+                Disc disc3 = getDisc(col, row+3).orElse(null);
+
+                if (row+3 < ROWS && discsNotNull(disc1, disc2, disc3)) {
+                    if (checkIfDiscOwnerMatch(player, disc1, disc2, disc3)) {
+                        return true;
+                    }
+                }
+                if (col+3 < COLUMNS) {
+                    disc1 = getDisc(col+1, row).orElse(null);
+                    disc2 = getDisc(col+2, row).orElse(null);
+                    disc3 = getDisc(col+3, row).orElse(null);
+
+                    if (discsNotNull(disc1, disc2, disc3)) {
+                        if (checkIfDiscOwnerMatch(player, disc1, disc2, disc3)) {
+                            return true;
+                        }
+                    }
+
+                    disc1 = getDisc(col+1, row+1).orElse(null);
+                    disc2 = getDisc(col+2, row+2).orElse(null);
+                    disc3 = getDisc(col+3, row+3).orElse(null);
+
+                    if (discsNotNull(disc1, disc2, disc3)) {
+                        if (checkIfDiscOwnerMatch(player, disc1, disc2, disc3)) {
+                            return true;
+                        }
+                    }
+
+                    disc1 = getDisc(col+1, row-1).orElse(null);
+                    disc2 = getDisc(col+2, row-2).orElse(null);
+                    disc3 = getDisc(col+3, row-3).orElse(null);
+
+                    if (discsNotNull(disc1, disc2, disc3)) {
+                        if (checkIfDiscOwnerMatch(player, disc1, disc2, disc3)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
         return false;
     }
-
 }

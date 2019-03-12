@@ -49,4 +49,12 @@ public class GlobalBoard {
 
         return board.getLastPlacement();
     }
+
+    public static int getNumberOfMoves() {
+        if (board == null) {
+            board = new Board();
+        }
+
+        return board.getNumberOfMoves();
+    }
 }
