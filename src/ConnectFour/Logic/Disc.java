@@ -3,6 +3,7 @@ package ConnectFour.Logic;
 import javafx.geometry.Pos;
 
 public class Disc {
+    private Point placement;
     private boolean isOwnedByPlayer;
 
     public Disc(final boolean isOwnedByPlayer) {

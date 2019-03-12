@@ -1,5 +1,6 @@
 package ConnectFour.GUI;
 
+import ConnectFour.AI.AI;
 import ConnectFour.Logic.*;
 
 import ConnectFour.Logic.Point;
@@ -79,8 +80,8 @@ public class Painter {
         }
     }
 
-    static void dropDisc(DiscShape discShape, int column) {
-        Point point = GlobalBoard.getInstance().placeDisc(new Disc(GlobalBoard.getTurn()), column);
+    public static void dropDisc(DiscShape discShape, int column) {
+        Point point = GlobalBoard.placeDisc(new Disc(GlobalBoard.getTurn()), column);
 
         if (point.getY() >= 0) {
             Main.addDisc(discShape);
@@ -108,13 +109,22 @@ public class Painter {
             rect.setTranslateX((double) (x * (TILE_SIZE + DISTANCE_BETWEEN_CIRCLES) + TILE_SIZE / 3));
             rect.setFill(Color.TRANSPARENT);
 
-            rect.setOnMouseEntered(e -> rect.setFill(Color.rgb(200, 200, 50, 0.3)));
+            rect.setOnMouseEntered(e -> {
+                if (!GlobalBoard.isGameOver()) {
+                    rect.setFill(Color.rgb(200, 200, 50, 0.3));
+                }
+            });
             rect.setOnMouseExited(e -> rect.setFill(Color.TRANSPARENT));
 
             final int column = x;
             rect.setOnMouseClicked(e -> {
-                if (GlobalBoard.getTurn()){
+                if (GlobalBoard.getTurn() && !GlobalBoard.isGameOver()){
                     dropDisc(new DiscShape(), column);
+
+                    if (!GlobalBoard.isGameOver()) {
+                        int aiMove = AI.minimaxDecision().getX();
+                        dropDisc(new DiscShape(), aiMove);
+                    }
                 }
             });
 
@@ -202,10 +212,6 @@ public class Painter {
     }
 
     static Parent makePauseMenu() {
-        GameMenu gameMenu = new GameMenu();
-
-
-
-        return gameMenu;
+        return new GameMenu();
     }
 }

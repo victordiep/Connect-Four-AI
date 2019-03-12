@@ -1,36 +1,53 @@
 package ConnectFour.AI;
 
-import ConnectFour.Logic.Board;
-import ConnectFour.Logic.Disc;
-import ConnectFour.Logic.Point;
-import ConnectFour.Logic.Turn;
+import ConnectFour.Logic.*;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Optional;
 
 public class BoardState extends Board {
     private Point lastPlacement;
 
-    // Starting board state
-    public BoardState(Disc[][] discs) {
+    // Mimics the global board
+    public BoardState() {
         turn = new Turn();
         this.discs = new Disc[COLUMNS][ROWS];
-        lastPlacement = null;
+        lastPlacement = GlobalBoard.getLastPlacement();
 
         for (int x = 0; x < Board.COLUMNS; x++) {
             for (int y = 0; y < Board.ROWS; y++) {
-                discs[x][y] = new Disc(discs[x][y]);
+                Disc disc = GlobalBoard.getDisc(x, y);
+
+                if (disc != null) {
+                    this.discs[x][y] = new Disc(disc);
+                }
             }
         }
     }
 
     // Board state based on existing board
     public BoardState(BoardState boardState) {
+        copyBoardState(boardState);
+    }
+
+    // Board state based on existing board and then a move is made
+    private BoardState(BoardState boardState, Point moveToMake) {
+        copyBoardState(boardState);
+
+        Disc disc = new Disc(getTurn());
+        lastPlacement = placeDisc(disc, moveToMake.getX());
+    }
+
+    private void copyBoardState(BoardState boardState) {
         turn = new Turn(boardState.getTurn());
         this.discs = new Disc[COLUMNS][ROWS];
-        lastPlacement = new Point(boardState.getLastPlacement());
+
+        if (boardState.getLastPlacement() != null) {
+            lastPlacement = new Point(boardState.getLastPlacement());
+        }
+        else {
+            lastPlacement = null;
+        }
 
         for (int x = 0; x < Board.COLUMNS; x++) {
             for (int y = 0; y < Board.ROWS; y++) {
@@ -43,13 +60,6 @@ public class BoardState extends Board {
         }
     }
 
-    public BoardState(BoardState boardState, Point moveToMake) {
-        discs = boardState.discs;
-
-        Disc disc = new Disc(getTurn());
-        placeDisc(disc, moveToMake.getX());
-    }
-
     public Point getLastPlacement() {
         return lastPlacement;
     }
@@ -57,7 +67,14 @@ public class BoardState extends Board {
     private List<Point> getAllPossiblePlacements() {
         List<Point> possibleDiscPlacements = new LinkedList<>();
 
+        for (int column = 0; column < COLUMNS; column++) {
+            int validRow = findEmptyRow(column);
 
+            if (validRow >= 0 && validRow < COLUMNS) {
+                Point validPlacement = new Point(column, validRow);
+                possibleDiscPlacements.add(validPlacement);
+            }
+        }
 
         return possibleDiscPlacements;
     }
@@ -66,10 +83,8 @@ public class BoardState extends Board {
         List<BoardState> boardTree = new LinkedList<>();
         List<Point> nextPossibleMoves = getAllPossiblePlacements();
 
-        ListIterator<Point> iter = nextPossibleMoves.listIterator();
-
-        while (iter.hasNext()) {
-            iter.next();
+        for (Point placement : nextPossibleMoves) {
+            boardTree.add(new BoardState(this, placement));
         }
 
         return boardTree;
