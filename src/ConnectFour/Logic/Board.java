@@ -276,7 +276,7 @@ public class Board {
             }
         }
 
-        score += center_count;
+        score += center_count*2;
 
         for (int col = 0; col < COLUMNS; col++) {
             for (int row = 0; row < ROWS; row++) {

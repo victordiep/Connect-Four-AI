@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 public class AI {
-    public static final int searchDepth = 6;
+    public static final int searchDepth = 8;
 
     private AI() {
 
