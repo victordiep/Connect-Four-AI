@@ -90,6 +90,10 @@ public class Painter {
             TranslateTransition dropAnimation = new TranslateTransition(Duration.seconds(0.5), discShape);
             dropAnimation.setToY((double) (point.getY() * (TILE_SIZE + DISTANCE_BETWEEN_CIRCLES) + TILE_SIZE / 3));
             dropAnimation.setOnFinished(e -> {
+                if (!GlobalBoard.getTurn() && !GlobalBoard.isGameOver()) {
+                    int aiMove = AI.minimaxDecision().getX();
+                    dropDisc(new DiscShape(), aiMove);
+                }
                 /* TODO: Implement end game
                 if (gameOver()) {
                     endGame();
@@ -120,11 +124,6 @@ public class Painter {
             rect.setOnMouseClicked(e -> {
                 if (GlobalBoard.getTurn() && !GlobalBoard.isGameOver()){
                     dropDisc(new DiscShape(), column);
-
-                    if (!GlobalBoard.isGameOver()) {
-                        int aiMove = AI.minimaxDecision().getX();
-                        dropDisc(new DiscShape(), aiMove);
-                    }
                 }
             });
 

@@ -5,7 +5,7 @@ import ConnectFour.Logic.Point;
 import java.util.List;
 
 public class AI {
-    private static final int searchDepth = 6;
+    private static final int searchDepth = 8;
 
     private AI() {
 
