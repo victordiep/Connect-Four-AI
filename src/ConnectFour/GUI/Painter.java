@@ -169,8 +169,6 @@ public class Painter {
     }
 
     private static class GameMenu extends Parent {
-        private Text text;
-
         public GameMenu() {
             setVisible(false);
 
@@ -185,18 +183,22 @@ public class Painter {
             MenuButton remixAIModeBtn = new MenuButton("Remix: Computer vs. Computer");
 
             classicModeBtn.setOnMouseClicked(e -> {
+                System.out.println("PLAYING CLASSIC MODE");
                 GlobalBoard.setGameMode(GameMode.CLASSIC_MODE);
             });
 
             remixModeBtn.setOnMouseClicked(e -> {
+                System.out.println("PLAYING REMIX MODE");
                 GlobalBoard.setGameMode(GameMode.REMIX_MODE);
             });
 
             classicAIModeBtn.setOnMouseClicked(e -> {
+                System.out.println("PLAYING AI CLASSIC MODE");
                 GlobalBoard.setGameMode(GameMode.AI_CLASSIC_MODE);
             });
 
             remixAIModeBtn.setOnMouseClicked(e -> {
+                System.out.println("PLAYING AI REMIX MODE");
                 GlobalBoard.setGameMode(GameMode.AI_REMIX_MODE);
             });
 

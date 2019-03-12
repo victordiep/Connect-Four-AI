@@ -6,8 +6,10 @@ import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -18,6 +20,7 @@ public class Main extends Application {
     static void addDisc(Circle discShape) {
         discRoot.getChildren().add(discShape);
     }
+    static Parent gameMenu;
 
     private Parent createContent() {
         Pane root = new Pane();
@@ -25,7 +28,8 @@ public class Main extends Application {
         root.getChildren().add(discRoot);
         root.getChildren().addAll(Painter.makeDropColumns());
         root.getChildren().add(Painter.makeGrid());
-        root.getChildren().add(Painter.makePauseMenu());
+        gameMenu = Painter.makePauseMenu();
+        root.getChildren().add(gameMenu);
 
         return root;
     }
@@ -33,6 +37,17 @@ public class Main extends Application {
     private void setupPrimaryStage(Stage primaryStage) {
         Scene scene = new Scene(createContent());
         scene.setFill(Color.DIMGREY);
+
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.ESCAPE) {
+                if (!gameMenu.isVisible()) {
+                    gameMenu.setVisible(true);
+                }
+                else {
+                    gameMenu.setVisible(false);
+                }
+            }
+        });
 
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
