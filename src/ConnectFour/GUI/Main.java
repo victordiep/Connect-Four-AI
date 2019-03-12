@@ -20,6 +20,9 @@ public class Main extends Application {
     static void addDisc(Circle discShape) {
         discRoot.getChildren().add(discShape);
     }
+    static void clearDiscs() {
+        discRoot.getChildren().clear();
+    }
     static Parent gameMenu;
 
     private Parent createContent() {

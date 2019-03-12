@@ -60,10 +60,7 @@ public class GlobalBoard {
     }
 
     public static void setGameMode(GameMode mode) {
-        if (board == null) {
-            board = new Board();
-        }
-
+        board = null;
         gameMode = mode;
     }
 

@@ -184,21 +184,25 @@ public class Painter {
 
             classicModeBtn.setOnMouseClicked(e -> {
                 System.out.println("PLAYING CLASSIC MODE");
+                Main.clearDiscs();
                 GlobalBoard.setGameMode(GameMode.CLASSIC_MODE);
             });
 
             remixModeBtn.setOnMouseClicked(e -> {
                 System.out.println("PLAYING REMIX MODE");
+                Main.clearDiscs();
                 GlobalBoard.setGameMode(GameMode.REMIX_MODE);
             });
 
             classicAIModeBtn.setOnMouseClicked(e -> {
                 System.out.println("PLAYING AI CLASSIC MODE");
+                Main.clearDiscs();
                 GlobalBoard.setGameMode(GameMode.AI_CLASSIC_MODE);
             });
 
             remixAIModeBtn.setOnMouseClicked(e -> {
                 System.out.println("PLAYING AI REMIX MODE");
+                Main.clearDiscs();
                 GlobalBoard.setGameMode(GameMode.AI_REMIX_MODE);
             });
 
