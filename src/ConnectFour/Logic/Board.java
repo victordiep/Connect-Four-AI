@@ -1,6 +1,7 @@
 package ConnectFour.Logic;
 
 import java.util.Optional;
+import java.util.Random;
 
 public class Board {
     protected Turn turn;
@@ -64,6 +65,20 @@ public class Board {
         } while (row >= 0);
 
         return row;
+    }
+
+    public int findRandomPlacement() {
+        Random rand = new Random();
+        int column = -1;
+        int row = -1;
+
+        // Look for a row with an empty spot in the column
+        while (row < 0) {
+            column = rand.nextInt(COLUMNS);
+            row = findEmptyRow(column);
+        }
+
+        return column;
     }
 
     public Point placeDisc(final Disc disc, final int column) {

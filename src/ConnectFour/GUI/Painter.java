@@ -122,8 +122,13 @@ public class Painter {
 
             final int column = x;
             rect.setOnMouseClicked(e -> {
-                if (GlobalBoard.getTurn() && !GlobalBoard.isGameOver()){
-                    dropDisc(new DiscShape(), column);
+                if (GlobalBoard.getTurn() && !GlobalBoard.isGameOver()) {
+                    if (GlobalBoard.getGameMode() == GameMode.CLASSIC_MODE) {
+                        dropDisc(new DiscShape(), column);
+                    } else if (GlobalBoard.getGameMode() == GameMode.AI_CLASSIC_MODE) {
+                        int randomMove = GlobalBoard.findRandomPlacement();
+                        dropDisc(new DiscShape(), randomMove);
+                    }
                 }
             });
 

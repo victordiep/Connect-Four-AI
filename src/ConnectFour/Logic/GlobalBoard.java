@@ -5,7 +5,7 @@ package ConnectFour.Logic;
  */
 public class GlobalBoard {
     private static Board board;
-    private static GameMode gameMode;
+    private static GameMode gameMode = GameMode.CLASSIC_MODE;
 
     private GlobalBoard() {
 
@@ -70,5 +70,13 @@ public class GlobalBoard {
         }
 
         return board.getNumberOfMoves();
+    }
+
+    public static int findRandomPlacement() {
+        if (board == null) {
+            board = new Board();
+        }
+
+        return board.findRandomPlacement();
     }
 }
