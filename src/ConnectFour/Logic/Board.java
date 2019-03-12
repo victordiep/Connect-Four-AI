@@ -83,25 +83,30 @@ public class Board {
     }
 
     // For the AI that can remove
-    public void removeBottomDisc(final int column) {
+    public boolean removeBottomDisc(final int column) {
         Disc bottomDisc = getDisc(column, ROWS-1).orElse(null);
 
-        // Shift all the discs
         if (bottomDisc != null) {
-            for (int row = 0; row < MAX_INDEX_ROW-1; row++) {
-                Disc nextDisc = getDisc(column, row+1).orElse(null);
+            // Remove and shift all the discs
+            if (turn.isPlayerTurn() == bottomDisc.isOwnedByPlayer()) {
+                for (int row = 0; row < MAX_INDEX_ROW-1; row++) {
+                    Disc nextDisc = getDisc(column, row+1).orElse(null);
 
-                if (nextDisc == null) {
-                    // Set the top disc to null since we shifted it down
-                    discs[column][row] = null;
-                    break;
+                    if (nextDisc == null) {
+                        // Set the top disc to null since we shifted it down
+                        discs[column][row] = null;
+                        break;
+                    }
+
+                    discs[column][row] = nextDisc;
                 }
-
-                discs[column][row] = nextDisc;
             }
+
+            turn.changeTurn();
+            return true;
         }
 
-        turn.changeTurn();
+        return false;
     }
 
     // Game end logic
